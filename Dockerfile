@@ -1,7 +1,7 @@
 FROM docker.io/centos
-MAINTAINER Manuel Sanchez <mannysanchez998@gmail.com>
+MAINTAINER Kyle Minshall <kyleminshall@gmail.com>
 
-LABEL Description="This image contains a minimal LAMP setup with sshd installed"
+LABEL Description="This image contains a minimal RoR setup with sshd installed"
 
 # Update packages
 RUN yum update -y

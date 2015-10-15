@@ -25,15 +25,58 @@
 
     - name: Generate host ssh keys 
       command: ssh-keygen -A
+      
+    - name: Set up RoR Environment
+      yum: name="{{item}}" state=installed
+      with_items:
+        - git-core
+        - zlib
+        - zlib-devel
+        - gcc-c++
+        - patch
+        - readline
+        - readline-devel
+        - libyaml-devel 
+        - libffi-devel 
+        - openssl-devel
+        - make
+        - bzip2
+        - autoconf
+        - automake
+        - libtool
+        - bison
+        - curl
+        - sqlite-devel
+        
+    - name: Install rbenv
+      command: cd
+      command: git clone git://github.com/sstephenson/rbenv.git .rbenv
+      command: echo 'export PATH="$HOME/.rbenv/bin:$PATH"' >> ~/.bash_profile
+      command: echo 'eval "$(rbenv init -)"' >> ~/.bash_profile
+      command: exec $SHELL
+      command: git clone git://github.com/sstephenson/ruby-build.git ~/.rbenv/plugins/ruby-build
+      command: echo 'export PATH="$HOME/.rbenv/plugins/ruby-build/bin:$PATH"' >> ~/.bash_profile
+      command: exec $SHELL
     
-    - name: Install LAMP packages
+    - name: Install Ruby
+      command: rbenv install -v 2.2.1
+      command: rbenv global 2.2.1
+      command: echo "gem: --no-document" > ~/.gemrc
+      command: gem install bundler
+     
+    - name: Install Rails
+      command: gem install rails -v 4.2.0
+      command: rbenv rehash
+      
+    - name: Install Node.js
+      yum: name=nodejs state=installed
+    
+    - name: Install RoR packages
       yum: name="{{item}}" state=installed
       with_items:
         - httpd
-        - mariadb
         - mariadb-server
-        - php
-        - php-mysql
+        - mariadb-devel
     
     - name: Copy default index.html
       copy: src=index.html dest=/var/www/html/index.html mode=0755
@@ -64,4 +107,4 @@
 
     - name: Create mysql database
       sudo_user: docker
-      command: mysql_install_db
+      command: mysql_secure_installation
